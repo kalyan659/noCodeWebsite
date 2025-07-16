@@ -21,15 +21,36 @@ else:
     st.error("API key found! ")
 
 
+# def generate_website(prompt):
+#     headers = {
+#         "Authorization": f"Bearer {API_KEY}",
+#         "Content-Type": "application/json",
+#     }
+ 
+#     data = {
+#         # qwen/qwen-2.5-coder-32b-instruct:free
+#         # deepseek/deepseek-chat-v3-0324:free
+#         "model": "qwen/qwen-2.5-coder-32b-instruct:free",
+#         "messages": [
+#             {"role": "system", "content": "You are a helpful assistant for website generation."},
+#             {"role": "user", "content": prompt}
+#         ]
+#     }
+
+#     response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
+#     # Parse response correctly
+#     response_json = response.json()
+#     content = response_json["choices"][0]["message"]["content"]
+
+#     print(content)  # Optional for debugging
+#     return content
 def generate_website(prompt):
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json",
     }
- 
+
     data = {
-        # qwen/qwen-2.5-coder-32b-instruct:free
-        # deepseek/deepseek-chat-v3-0324:free
         "model": "qwen/qwen-2.5-coder-32b-instruct:free",
         "messages": [
             {"role": "system", "content": "You are a helpful assistant for website generation."},
@@ -37,13 +58,28 @@ def generate_website(prompt):
         ]
     }
 
-    response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
-    # Parse response correctly
-    response_json = response.json()
-    content = response_json["choices"][0]["message"]["content"]
+    try:
+        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
+        response.raise_for_status()  # raises error if not 200 OK
+        response_json = response.json()
 
-    print(content)  # Optional for debugging
-    return content
+        # Safe access with error fallback
+        content = response_json.get("choices", [{}])[0].get("message", {}).get("content")
+
+        if not content:
+            raise ValueError("Missing content in response.")
+
+        return content
+
+    except requests.exceptions.RequestException as e:
+        print("API request failed:", e)
+        print("Response:", response.text)
+        raise RuntimeError("LLM API request failed.") from e
+
+    except Exception as e:
+        print("Unexpected response format:", response.text)
+        raise
+
 if __name__ == '__main__':
     prompt =  ''' Output only the full working HTML document including embedded CSS and JavaScript 
     — no explanations, no markdown, just the code. It should be a single-page website with a hero banner, 
