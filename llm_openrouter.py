@@ -17,6 +17,7 @@ load_dotenv()
 API_KEY = os.getenv("open_router_llm_api") or st.secrets.get("open_router_llm_api")
 if not API_KEY:
     st.error("API key not found! Set it in .env or Streamlit Secrets.")
+    st.stop()
 else:
     st.error("API key found! ")
 
