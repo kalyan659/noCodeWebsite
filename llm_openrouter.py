@@ -7,11 +7,14 @@ Created on Mon Mar 17 11:00:29 2025
 
 import requests
 import os
-from dotenv import load_dotenv  # Correct import
+from dotenv import load_dotenv
+import streamlit as st
 
-load_dotenv()  # This loads the .env file
+# Load .env only for local development
+load_dotenv()
 
-API_KEY = os.getenv("open_router_llm_api")
+# Check env first, fallback to Streamlit secrets
+API_KEY = os.getenv("open_router_llm_api") or st.secrets.get("open_router_llm_api")
 
 def generate_website(prompt):
     headers = {

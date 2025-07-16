@@ -14,14 +14,14 @@ from dotenv import load_dotenv
 from generator import call_ollama, save_code
 from llm_openrouter import generate_website
 from shutil import which
-
+import streamlit as st
 
 
 # === Load .env Variables ===
 load_dotenv()
 
 # === Constants ===
-NETLIFY_TOKEN = os.getenv("NETLIFY_AUTH_TOKEN")
+NETLIFY_TOKEN = os.getenv("NETLIFY_AUTH_TOKEN") or st.secrets.get("NETLIFY_AUTH_TOKEN")
 DEPLOY_DIR_LOCAL = os.path.abspath("static/output-site")
 #NPX_PATH = r"D:\Program Files\npx.CMD"  # Adjust if on Linux/macOS
 NPX_PATH = which("npx")
