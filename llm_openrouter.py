@@ -46,6 +46,9 @@ else:
 #     print(content)  # Optional for debugging
 #     return content
 def generate_website(prompt):
+    import requests
+    import json
+
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json",
@@ -60,26 +63,32 @@ def generate_website(prompt):
     }
 
     try:
-        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
-        response.raise_for_status()  # raises error if not 200 OK
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers=headers,
+            json=data,
+            timeout=30  # Add timeout for stability
+        )
+
+        print("🔄 HTTP Status Code:", response.status_code)
+        print("📩 Response Text:", response.text)
+
+        response.raise_for_status()  # Will raise error for 4xx or 5xx
         response_json = response.json()
 
-        # Safe access with error fallback
-        content = response_json.get("choices", [{}])[0].get("message", {}).get("content")
+        # Try to parse safely
+        content = response_json.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
 
         if not content:
-            raise ValueError("Missing content in response.")
+            raise ValueError("❌ LLM returned no content.")
 
         return content
 
-    except requests.exceptions.RequestException as e:
-        print("API request failed:", e)
-        print("Response:", response.text)
+    except Exception as e:
+        print("🚨 LLM ERROR:", str(e))
+        print("🔍 Full API response (if available):", getattr(response, "text", "No response"))
         raise RuntimeError("LLM API request failed.") from e
 
-    except Exception as e:
-        print("Unexpected response format:", response.text)
-        raise
 
 if __name__ == '__main__':
     prompt =  ''' Output only the full working HTML document including embedded CSS and JavaScript 
