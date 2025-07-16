@@ -47,14 +47,16 @@ if st.button("Generate Website"):
         Our Gallery section upto 6 photos. Our photographer section up to 6 photos with photographer name. 
         Add copyright of year © 2025.
         '''
+        try:
+            with st.spinner("Generating website from LLM..."):
+                result = generate_website(full_prompt)
+                save_code(result)
 
-        with st.spinner("Generating website from LLM..."):
-            result = generate_website(full_prompt)
-            save_code(result)
+            st.success("✅ Website code generated and saved!")
 
-        st.success("✅ Website code generated and saved!")
-
-        html_file = os.path.join(DEPLOY_DIR_LOCAL, "index.html")
+            html_file = os.path.join(DEPLOY_DIR_LOCAL, "index.html")
+        except Exception as e:
+            st.error("Failed to load generated HTML."+ str(e))
         if os.path.exists(html_file):
             st.markdown("### 🔍 Preview")
             with open(html_file, "r", encoding="utf-8") as f:
