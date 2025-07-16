@@ -86,6 +86,8 @@ def generate_website(prompt):
 
     except Exception as e:
         st.error(f"🚨 LLM API error: {e}")
+        if API_KEY:
+            st.write(API_KEY[:4])
         st.stop()
 
 
