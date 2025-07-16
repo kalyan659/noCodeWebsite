@@ -1,0 +1,76 @@
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .hero-banner {
+            background-image: url('https://via.placeholder.com/1920x1080');
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+        .hero-banner h1 {
+            font-size: 3em;
+            margin: 0;
+        }
+        .about, .gallery, .contact {
+            padding: 50px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .about p {
+            margin-bottom: 1em;
+        }
+        .gallery img {
+            width: 32%;
+            display: inline-block;
+            margin-right: 1%;
+            vertical-align: top;
+            transition: transform 0.3s;
+        }
+        .gallery img:hover {
+            transform: scale(1.1);
+        }
+        .photographers img {
+            width: 47%;
+            display: inline-block;
+            margin-right: 1%;
+            vertical-align: top;
+            border-radius: 50%;
+        }
+        .photographers .name {
+            text-align: center;
+        }
+        .contact form {
+            display: flex;
+            flex-direction: column;
+        }
+        .contact input, .contact textarea {
+            margin-bottom: 1em;
+            padding: 10px;
+            font-size: 1em;
+        }
+        .contact button {
+            padding: 10px;
+            font-size: 1em;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .contact button:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #333;
+            color: white;
+        }
+    

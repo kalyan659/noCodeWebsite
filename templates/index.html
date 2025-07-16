@@ -1,0 +1,258 @@
+<!---
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Website Generator</title>
+  <style>
+    #spinner {
+      display: none;
+      margin-top: 10px;
+    }
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h2>Generate Website</h2>
+  <form method="POST">
+    <textarea name="prompt" rows="4" cols="60" placeholder="Describe your website...">{{ prompt or '' }}</textarea><br>
+    <button type="submit">Generate</button>
+  </form>
+
+  {% if prompt %}
+    <h3>Preview:</h3>
+    <iframe src="/static/output-site/index.html" style="width:100%; height:400px; border:1px solid #ccc;"></iframe>
+
+
+    <h3>Deploy:</h3>
+    <label for="siteNameInput">Netlify Site Name (optional): </label>
+    <input type="text" id="siteNameInput" placeholder="Enter unique site name" />
+    <button onclick="deploySite()">Deploy to Netlify</button>
+    <div id="spinner"><span class="loader"></span> Deploying...</div>
+    <div id="deployResult"></div>
+  {% endif %}
+
+  <script>
+      function deploySite() {
+            const spinner = document.getElementById("spinner");
+            const resultDiv = document.getElementById("deployResult");
+            resultDiv.innerHTML = "";
+            spinner.style.display = "inline-block";
+
+            const siteName = document.getElementById("siteNameInput").value.trim();
+
+            // Append site name as query param if provided
+            const url = siteName ? `/deploy?site=${encodeURIComponent(siteName)}` : '/deploy';
+
+            fetch(url)
+              .then(response => response.json())
+              .then(data => {
+                spinner.style.display = "none";
+                if (data.success && data.url) {
+                  resultDiv.innerHTML = `<p><strong>✅ Deployed!</strong> Visit: <a href="${data.url}" target="_blank">${data.url}</a></p>`;
+                } else {
+                  resultDiv.innerHTML = `<p>❌ Error: ${data.error || "Unknown error"}</p>`;
+                }
+              })
+              .catch(err => {
+                spinner.style.display = "none";
+                resultDiv.innerHTML = `<p>❌ Deployment failed: ${err}</p>`;
+              });
+          }
+    </script>   
+</body>
+</html>
+--->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Website Generator</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Custom spinner animation - Tailwind doesn't have a direct equivalent for border-top animation */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spinner-border {
+      border: 4px solid #e2e8f0; /* Tailwind's gray-200 */
+      border-top: 4px solid #3b82f6; /* Tailwind's blue-500 */
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    /* Hide spinner by default, moved styles here for consistency with original working script */
+    #spinner {
+      display: none;
+      margin-top: 10px; /* Added margin for spacing */
+    }
+  </style>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center font-['Inter'] p-4 sm:p-6">
+  <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-4xl space-y-6">
+    <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">Develop Your Website and Deploy</h2>
+
+    <!-- Website Description Form -->
+    
+    <form method="POST" class="space-y-4">
+      <textarea
+        name="prompt"
+        rows="5"
+        id="promptInput"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition duration-200 ease-in-out resize-y"
+        placeholder="Describe your website, e.g., 'A modern portfolio site for a graphic designer with a dark theme and parallax scrolling effects.'"
+      ></textarea>
+      <button
+      type="submit"
+      id="generateBtn"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-300 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+    >
+      Generate Website
+    </button>
+
+    <div id="generateSpinner" class="mt-4 text-gray-700" style="display:none;">
+      <span class="spinner-border"></span> Generating...
+    </div>
+    </form>
+
+    {% if prompt is not none %}
+      <!-- Preview Section -->
+      <div class="space-y-4 pt-6 border-t border-gray-200 mt-6" id="previewSection">
+        <h3 class="text-2xl font-semibold text-gray-800">Preview:</h3>
+        <div class="relative w-full aspect-video bg-gray-50 rounded-lg shadow-inner border border-gray-200 overflow-hidden">
+          <iframe
+            id="websitePreviewIframe"
+            src="/static/output-site/index.html"
+            class="w-full h-full border-none rounded-lg"
+            title="Website Preview"
+          ></iframe>
+          <div class="absolute inset-0 flex items-center justify-center bg-gray-200/50 text-gray-600 text-sm font-medium z-10 pointer-events-none" id="iframeLoading">
+            Loading preview...
+          </div>
+        </div>
+      </div>
+
+      <!-- Deploy Section -->
+      <div class="space-y-4 pt-6 border-t border-gray-200 mt-6" id="deploySection">
+        <h3 class="text-2xl font-semibold text-gray-800">Deploy the Website:</h3>
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+          <label for="siteNameInput" class="text-gray-700 font-medium whitespace-nowrap">Website URL (optional):</label>
+          <input
+            type="text"
+            id="siteNameInput"
+            placeholder="Enter unique site name"
+            class="flex-grow w-full sm:w-auto p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition duration-200 ease-in-out"
+          />
+          <button
+            id="deployBtn"
+            onclick="deploySite()"
+            class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 ease-in-out shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 flex items-center justify-center gap-2"
+          >
+            Deploy Site
+          </button>
+    
+        </div>
+        <div id="spinner" class="mt-4 text-gray-700"><span class="spinner-border"></span> Deploying...</div> {# Spinner moved here with text #}
+        <div id="deployResult" class="mt-4 text-gray-700 text-center sm:text-left"></div>
+      </div>
+    {% endif %}
+
+    <script>
+      // Get necessary DOM elements
+      const websitePreviewIframe = document.getElementById("websitePreviewIframe");
+      const iframeLoading = document.getElementById("iframeLoading");
+
+      // Hide loading overlay for iframe once it loads
+      if (websitePreviewIframe) {
+        websitePreviewIframe.onload = function() {
+          if (iframeLoading) {
+            iframeLoading.style.display = 'none';
+          }
+        };
+        // Ensure loading indicator is visible initially for the iframe if it's present
+        if (iframeLoading) {
+          iframeLoading.style.display = 'flex';
+        }
+
+        // Handle potential iframe load errors
+        websitePreviewIframe.onerror = function() {
+          if (iframeLoading) {
+            iframeLoading.style.display = 'none';
+            // Optionally, show an error message within the iframe area
+            console.error("Failed to load iframe content.");
+          }
+        };
+      }
+      // add spinner in generate button
+      const form = document.querySelector('form');
+      const generateBtn = document.getElementById('generateBtn');
+      const generateSpinner = document.getElementById('generateSpinner');
+
+      form.addEventListener('submit', () => {
+        // Show spinner and disable button on form submit
+        generateSpinner.style.display = 'inline-block';
+        generateBtn.disabled = true;
+        generateBtn.textContent = 'Generating...';
+      });
+      // JavaScript to handle the deployment process
+      function deploySite() {
+          const spinner = document.getElementById("spinner");
+          const resultDiv = document.getElementById("deployResult");
+          const deployBtn = document.getElementById("deployBtn");
+
+          resultDiv.innerHTML = "";
+          spinner.style.display = "inline-block";
+
+          // Disable button & update text
+          deployBtn.disabled = true;
+          deployBtn.textContent = "Deploying...";
+
+          const siteName = document.getElementById("siteNameInput").value.trim();
+          const url = siteName ? `/deploy?site=${encodeURIComponent(siteName)}` : "/deploy";
+
+          fetch(url)
+            .then(response => response.json())
+            .then(data => {
+              spinner.style.display = "none";
+              if (data.success && data.url) {
+                resultDiv.innerHTML = `<p><strong>✅ Deployed!</strong> Visit: <a href="${data.url}" target="_blank">${data.url}</a></p>`;
+              } else {
+                resultDiv.innerHTML = `<p>❌ Error: ${data.error || "Unknown error"}</p>`;
+              }
+            })
+            .catch(err => {
+              spinner.style.display = "none";
+              resultDiv.innerHTML = `<p>❌ Deployment failed: ${err}</p>`;
+            })
+            .finally(() => {
+              // Re-enable button & restore text
+              deployBtn.disabled = false;
+              deployBtn.textContent = "Deploy Site";
+            });
+        }
+
+    </script>
+  </div>
+</body>
+</html>
+
+
+

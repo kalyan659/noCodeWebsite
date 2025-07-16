@@ -1,0 +1,4 @@
+Output only the full working HTML document including embedded CSS and JavaScript — no explanations, no markdown, just the code. It should be a single-page portfolio website for a freelance photographer with a hero banner, about section, gallery section, and contact form.
+
+
+Generate a modern, responsive portfolio website for a freelance photographer. Use elegant typography, professional layout, grid-based image gallery with lightbox support, and smooth transitions. The design should look clean, mobile-friendly, and visually engaging — like a Behance or Squarespace template. Include about, contact, and gallery sections

@@ -1,0 +1,160 @@
+Linking site ID: ae97f241-1b9a-4d19-8314-f4c838eff87c
+Deploy folder: D:\python\2025\open_router_llm-site-generator\static\output-site
+Using NPX_PATH: D:\Program Files\npx.CMD
+Linking site ID: ae97f241-1b9a-4d19-8314-f4c838eff87c
+Deploy folder: D:\python\2025\open_router_llm-site-generator\static\output-site
+Using NPX_PATH: D:\Program Files\npx.CMD
+Link stdout:
+Project already linked to "kalyanwebsite"
+Admin url: https://app.netlify.com/projects/kalyanwebsite
+
+To unlink this project, run: npx netlify unlink
+
+Link stderr:
+
+Linking site ID: ae97f241-1b9a-4d19-8314-f4c838eff87c
+Deploy folder: D:\python\2025\open_router_llm-site-generator\static\output-site
+Using NPX_PATH: D:\Program Files\npx.CMD
+Link stdout:
+Project already linked to "kalyanwebsite"
+Admin url: https://app.netlify.com/projects/kalyanwebsite
+
+To unlink this project, run: npx netlify unlink
+
+Link stderr:
+
+Deploy stdout:
+​
+Netlify Build                                                 
+────────────────────────────────────────────────────────────────
+​
+> Version
+  @netlify/build 33.4.3
+​
+> Flags
+  accountId: 684541f2650af77137e3c5fe
+​
+> Current directory
+  D:\python\2025\open_router_llm-site-generator
+​
+> Config file
+  No config file was defined: using default values.
+​
+> Context
+  production
+
+Deploying to Netlify
+────────────────────────────────────────────────────────────────
+
+[32mDeploy path: [39mD:\python\2025\open_router_llm-site-generator\static\output-site
+
+​
+Netlify Build Complete                                        
+────────────────────────────────────────────────────────────────
+​
+(Netlify Build completed in 14.8s)
+
+🚀 Deploy complete
+────────────────────────────────────────────────────────────────
+
+   ╭───────────────── ⬥  Production deploy is live ⬥  ─────────────────╮
+   │                                                                   │
+   │   Deployed to production URL: https://kalyanwebsite.netlify.app   │
+   │                                                                   │
+   │                        Unique deploy URL:                         │
+   │    https://68769f55d8f66432846d4d96--kalyanwebsite.netlify.app    │
+   │                                                                   │
+   ╰───────────────────────────────────────────────────────────────────╯
+
+[32mBuild logs: [39m        https://app.netlify.com/projects/kalyanwebsite/deploys/68769f55d8f66432846d4d96
+[32mFunction logs: [39m     https://app.netlify.com/projects/kalyanwebsite/logs/functions
+[32mEdge function Logs: [39mhttps://app.netlify.com/projects/kalyanwebsite/logs/edge-functions
+
+Deploy stderr:
+[33m⠋[39m Uploading blobs to deploy store...
+
+[32m√[39m Finished uploading blobs to deploy store
+[33m⠋[39m Hashing files...
+[33m⠋[39m Looking for a functions cache...
+[32m√[39m No cached functions were found
+[32m√[39m Finished hashing 
+[33m⠋[39m CDN diffing files...
+[32m√[39m CDN requesting 15 files
+[33m⠋[39m Uploading 21 files
+[32m√[39m Finished uploading 21 assets
+[33m⠋[39m Waiting for deploy to go live...
+[32m√[39m Deploy is live!
+
+Linking site ID: ae97f241-1b9a-4d19-8314-f4c838eff87c
+Deploy folder: D:\python\2025\open_router_llm-site-generator\static\output-site
+Using NPX_PATH: D:\Program Files\npx.CMD
+Link stdout:
+Project already linked to "kalyanwebsite"
+Admin url: https://app.netlify.com/projects/kalyanwebsite
+
+To unlink this project, run: npx netlify unlink
+
+Link stderr:
+
+Deploy stdout:
+​
+Netlify Build                                                 
+────────────────────────────────────────────────────────────────
+​
+> Version
+  @netlify/build 33.4.3
+​
+> Flags
+  accountId: 684541f2650af77137e3c5fe
+​
+> Current directory
+  D:\python\2025\open_router_llm-site-generator
+​
+> Config file
+  No config file was defined: using default values.
+​
+> Context
+  production
+
+Deploying to Netlify
+────────────────────────────────────────────────────────────────
+
+[32mDeploy path: [39mD:\python\2025\open_router_llm-site-generator\static\output-site
+
+​
+Netlify Build Complete                                        
+────────────────────────────────────────────────────────────────
+​
+(Netlify Build completed in 11.8s)
+
+🚀 Deploy complete
+────────────────────────────────────────────────────────────────
+
+   ╭───────────────── ⬥  Production deploy is live ⬥  ─────────────────╮
+   │                                                                   │
+   │   Deployed to production URL: https://kalyanwebsite.netlify.app   │
+   │                                                                   │
+   │                        Unique deploy URL:                         │
+   │    https://6877cc881077d7149aa6d399--kalyanwebsite.netlify.app    │
+   │                                                                   │
+   ╰───────────────────────────────────────────────────────────────────╯
+
+[32mBuild logs: [39m        https://app.netlify.com/projects/kalyanwebsite/deploys/6877cc881077d7149aa6d399
+[32mFunction logs: [39m     https://app.netlify.com/projects/kalyanwebsite/logs/functions
+[32mEdge function Logs: [39mhttps://app.netlify.com/projects/kalyanwebsite/logs/edge-functions
+
+Deploy stderr:
+[33m⠋[39m Uploading blobs to deploy store...
+
+[32m√[39m Finished uploading blobs to deploy store
+[33m⠋[39m Hashing files...
+[33m⠋[39m Looking for a functions cache...
+[32m√[39m No cached functions were found
+[32m√[39m Finished hashing 
+[33m⠋[39m CDN diffing files...
+[32m√[39m CDN requesting 20 files
+[33m⠋[39m Uploading 20 files
+[32m√[39m Finished uploading 20 assets
+[33m⠋[39m Waiting for deploy to go live...
+[32m√[39m Deploy is live!
+
