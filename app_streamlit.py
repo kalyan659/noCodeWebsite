@@ -184,9 +184,9 @@
 
 #=========================== cloud streamlit works ===================================
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Created on Tue Jul 15 23:01:36 2025
-
 @author: kalya
 """
 
@@ -194,32 +194,31 @@ import streamlit as st
 import os
 import uuid
 import requests
-import subprocess
 from dotenv import load_dotenv
 from generator import call_ollama, save_code
 from llm_openrouter import generate_website
-from shutil import which
 
 # === Streamlit UI ===
 st.set_page_config(page_title="LLM Website Generator", layout="wide")
 st.title("🧠 LLM Website Generator and Deployer")
+
 # === Load .env Variables ===
 load_dotenv()
 
 # === Constants ===
 NETLIFY_TOKEN = os.getenv("NETLIFY_AUTH_TOKEN") or st.secrets.get("NETLIFY_AUTH_TOKEN")
+NETLIFY_API = "https://api.netlify.com/api/v1"
+HEADERS = {
+    "Authorization": f"Bearer {NETLIFY_TOKEN}"
+}
 
-DEPLOY_DIR_LOCAL = os.path.abspath("static/output-site")
-#NPX_PATH = r"D:\Program Files\npx.CMD"  # Adjust if on Linux/macOS
-NPX_PATH = which("npx")
-#print("npx path:", npx_path)
+DEPLOY_DIR = os.path.abspath("static/output-site")
 
-
-
+# === Prompt Input ===
 prompt = st.text_area("Enter your prompt", height=200)
-
 custom_name = st.text_input("Custom site name (optional, lowercase, no spaces):")
 
+# === Website Generation ===
 if st.button("Generate Website"):
     if not prompt:
         st.warning("Please enter a prompt.")
@@ -235,12 +234,11 @@ if st.button("Generate Website"):
             with st.spinner("Generating website from LLM..."):
                 result = generate_website(full_prompt)
                 save_code(result)
-
             st.success("✅ Website code generated and saved!")
 
-            html_file = os.path.join(DEPLOY_DIR_LOCAL, "index.html")
+            html_file = os.path.join(DEPLOY_DIR, "index.html")
         except Exception as e:
-            st.error("Failed to load generated HTML."+ str(e))
+            st.error("Failed to generate website: " + str(e))
         if os.path.exists(html_file):
             st.markdown("### 🔍 Preview")
             with open(html_file, "r", encoding="utf-8") as f:
@@ -248,122 +246,69 @@ if st.button("Generate Website"):
         else:
             st.error("Failed to load generated HTML.")
 
-# === Deployment Section ===
+# === Deployment Utilities ===
+def create_site_with_name(name):
+    """Create a Netlify site with a custom subdomain name."""
+    response = requests.post(
+        f"{NETLIFY_API}/sites",
+        headers=HEADERS,
+        json={"name": name}
+    )
+    if response.status_code in [200, 201]:
+        return response.json()
+    elif response.status_code == 422:
+        return None
+    else:
+        raise Exception(response.text)
+
+def generate_fallback_name(base_name):
+    """Generate a unique fallback name if custom is taken."""
+    suffix = uuid.uuid4().hex[:6]
+    return f"{base_name}-{suffix}"
+
+def deploy_folder_to_netlify(site_id, folder_path):
+    """Deploy a folder to Netlify via the REST API."""
+    files = []
+    for root, dirs, filenames in os.walk(folder_path):
+        for filename in filenames:
+            file_path = os.path.join(root, filename)
+            rel_path = os.path.relpath(file_path, folder_path)
+            with open(file_path, "rb") as f:
+                files.append(('files[]', (rel_path, f.read())))
+
+    response = requests.post(
+        f"{NETLIFY_API}/sites/{site_id}/deploys",
+        headers=HEADERS,
+        files=files
+    )
+    if response.status_code in [200, 201]:
+        return response.json()
+    else:
+        raise Exception(f"Deploy failed: {response.text}")
+
+# === Deployment Action ===
 if st.button("🚀 Deploy to Netlify"):
-    def create_site_with_name(name):
-        response = requests.post(
-            "https://api.netlify.com/api/v1/sites",
-            headers={
-                "Authorization": f"Bearer {NETLIFY_TOKEN}",
-                "Content-Type": "application/json"
-            },
-            json={"name": name}
-        )
-        if response.status_code in [200, 201]:
-            return response.json()
-        elif response.status_code == 422:
-            return None
-        else:
-            raise Exception(response.text)
-
-    def generate_fallback_name(base_name):
-        suffix = uuid.uuid4().hex[:6]
-        return f"{base_name}-{suffix}"
-
-    def link_folder_to_netlify(site_id):
-        import traceback
-
-        with open("netlify_debug.log", "a") as log:
-            log.write(f"Linking site ID: {site_id}\n")
-            log.write(f"Deploy folder: {DEPLOY_DIR_LOCAL}\n")
-            log.write(f"Using NPX_PATH: {NPX_PATH}\n")
-
+    if not NETLIFY_TOKEN:
+        st.error("❌ Netlify token missing. Please add `NETLIFY_AUTH_TOKEN` in Streamlit Secrets.")
+    else:
         try:
-            result = subprocess.run(
-                [NPX_PATH, 'netlify', 'link', '--id', site_id],
-                cwd=DEPLOY_DIR_LOCAL,
-                check=True,
-                capture_output=True,
-                text=True
-            )
+            with st.spinner("Deploying..."):
+                if custom_name:
+                    site = create_site_with_name(custom_name)
+                    if not site:
+                        fallback_name = generate_fallback_name(custom_name)
+                        st.info(f"Custom name taken. Using fallback: `{fallback_name}`")
+                        site = create_site_with_name(fallback_name)
+                else:
+                    site = requests.post(f"{NETLIFY_API}/sites", headers=HEADERS).json()
 
-            with open("netlify_debug.log", "a") as log:
-                log.write("Link stdout:\n" + result.stdout + "\n")
-                log.write("Link stderr:\n" + result.stderr + "\n")
+                site_id = site["id"]
+                site_url = site["url"]
 
-            stdout_lower = result.stdout.lower()
-            return ("linked" in stdout_lower) or ("already linked" in stdout_lower)
+                deploy_response = deploy_folder_to_netlify(site_id, DEPLOY_DIR)
 
-        except subprocess.CalledProcessError as e:
-            with open("netlify_debug.log", "a") as log:
-                log.write("CalledProcessError:\n")
-                log.write(e.stdout or "")
-                log.write(e.stderr or "")
-                log.write(traceback.format_exc())
-                log.write("\n")
-            return False
+                st.success("✅ Deployed successfully!")
+                st.markdown(f"[🌍 View your website here]({site_url})", unsafe_allow_html=True)
 
         except Exception as e:
-            with open("netlify_debug.log", "a") as log:
-                log.write("Exception:\n" + traceback.format_exc() + "\n")
-            return False
-
-
-    def deploy_to_netlify(site_id):
-        import traceback
-
-        try:
-            result = subprocess.run(
-                [NPX_PATH, 'netlify', 'deploy', '--dir', DEPLOY_DIR_LOCAL, '--prod', '--site', site_id],
-                check=True,
-                capture_output=True,
-                text=True
-            )
-            with open("netlify_debug.log", "a") as log:
-                log.write("Deploy stdout:\n" + result.stdout + "\n")
-                log.write("Deploy stderr:\n" + result.stderr + "\n")
-
-            return result.stdout
-
-        except subprocess.CalledProcessError as e:
-            with open("netlify_debug.log", "a") as log:
-                log.write("Deploy CalledProcessError:\n")
-                log.write(e.stdout or "")
-                log.write(e.stderr or "")
-                log.write(traceback.format_exc())
-                log.write("\n")
-            raise e
-
-        except Exception as e:
-            with open("netlify_debug.log", "a") as log:
-                log.write("Deploy Exception:\n" + traceback.format_exc() + "\n")
-            raise e
-
-
-    try:
-        with st.spinner("Deploying..."):
-            if custom_name:
-                site = create_site_with_name(custom_name)
-                if not site:
-                    fallback_name = generate_fallback_name(custom_name)
-                    st.info(f"Custom name taken. Using fallback: `{fallback_name}`")
-                    site = create_site_with_name(fallback_name)
-            else:
-                site = {
-                    "id": "ae97f241-1b9a-4d19-8314-f4c838eff87c",
-                    "url": "https://kalyanwebsite.netlify.app"
-                }
-
-            site_id = site["id"]
-            url = site["url"]
-
-            if not link_folder_to_netlify(site_id):
-                st.error("Failed to link folder to Netlify.")
-            else:
-                output = deploy_to_netlify(site_id)
-                st.success("✅ Deployed!")
-                st.markdown(f"[🌍 View your website here]({url})", unsafe_allow_html=True)
-
-    except Exception as e:
-        st.error(f"❌ Deployment failed: {e}")
-
+            st.error(f"❌ Deployment failed: {e}")
