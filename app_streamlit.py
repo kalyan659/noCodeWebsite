@@ -185,6 +185,7 @@
 #=========================== cloud streamlit works ===================================
 # -*- coding: utf-8 -*-
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Created on Tue Jul 15 23:01:36 2025
 @author: kalya
@@ -208,10 +209,7 @@ load_dotenv()
 # === Constants ===
 NETLIFY_TOKEN = os.getenv("NETLIFY_AUTH_TOKEN") or st.secrets.get("NETLIFY_AUTH_TOKEN")
 NETLIFY_API = "https://api.netlify.com/api/v1"
-HEADERS = {
-    "Authorization": f"Bearer {NETLIFY_TOKEN}"
-}
-
+HEADERS = {"Authorization": f"Bearer {NETLIFY_TOKEN}"}
 DEPLOY_DIR = os.path.abspath("static/output-site")
 
 # === Prompt Input ===
@@ -227,7 +225,7 @@ if st.button("Generate Website"):
         Output only the full working HTML document including embedded CSS and JavaScript — no explanations, 
         no markdown, just the code. It should be a single-page website with a hero banner, about section, 
         gallery section, and contact form. In about section write 10 lines according to topic of prompt. 
-        Our Gallery section upto 6 photos. Our photographer section up to 6 photos with photographer name. 
+        Our Gallery section up to 6 photos. Our photographer section up to 6 photos with photographer name. 
         Add copyright of year © 2025.
         '''
         try:
@@ -239,6 +237,7 @@ if st.button("Generate Website"):
             html_file = os.path.join(DEPLOY_DIR, "index.html")
         except Exception as e:
             st.error("Failed to generate website: " + str(e))
+
         if os.path.exists(html_file):
             st.markdown("### 🔍 Preview")
             with open(html_file, "r", encoding="utf-8") as f:
@@ -257,19 +256,19 @@ def create_site_with_name(name):
     if response.status_code in [200, 201]:
         return response.json()
     elif response.status_code == 422:
-        return None
+        return None  # name taken
     else:
         raise Exception(response.text)
 
 def generate_fallback_name(base_name):
-    """Generate a unique fallback name if custom is taken."""
+    """Generate a fallback site name if custom name is taken."""
     suffix = uuid.uuid4().hex[:6]
     return f"{base_name}-{suffix}"
 
 def deploy_folder_to_netlify(site_id, folder_path):
-    """Deploy a folder to Netlify via the REST API."""
+    """Deploy local folder contents to Netlify site using REST API."""
     files = []
-    for root, dirs, filenames in os.walk(folder_path):
+    for root, _, filenames in os.walk(folder_path):
         for filename in filenames:
             file_path = os.path.join(root, filename)
             rel_path = os.path.relpath(file_path, folder_path)
@@ -281,18 +280,20 @@ def deploy_folder_to_netlify(site_id, folder_path):
         headers=HEADERS,
         files=files
     )
+
     if response.status_code in [200, 201]:
         return response.json()
     else:
-        raise Exception(f"Deploy failed: {response.text}")
+        raise Exception(f"Deploy failed: {response.status_code} → {response.text}")
 
 # === Deployment Action ===
 if st.button("🚀 Deploy to Netlify"):
     if not NETLIFY_TOKEN:
-        st.error("❌ Netlify token missing. Please add `NETLIFY_AUTH_TOKEN` in Streamlit Secrets.")
+        st.error("❌ Netlify token missing. Please add `NETLIFY_AUTH_TOKEN` in .env or Streamlit Secrets.")
     else:
         try:
             with st.spinner("Deploying..."):
+                # Create or get site
                 if custom_name:
                     site = create_site_with_name(custom_name)
                     if not site:
@@ -305,6 +306,7 @@ if st.button("🚀 Deploy to Netlify"):
                 site_id = site["id"]
                 site_url = site["url"]
 
+                # Deploy site
                 deploy_response = deploy_folder_to_netlify(site_id, DEPLOY_DIR)
 
                 st.success("✅ Deployed successfully!")
@@ -312,3 +314,4 @@ if st.button("🚀 Deploy to Netlify"):
 
         except Exception as e:
             st.error(f"❌ Deployment failed: {e}")
+
