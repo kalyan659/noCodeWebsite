@@ -13,13 +13,7 @@ import streamlit as st
 # Load .env only for local development
 load_dotenv()
 
-# Check env first, fallback to Streamlit secrets
-API_KEY = os.getenv("open_router_llm_api") or st.secrets.get("open_router_llm_api")
-if not API_KEY:
-    st.error("API key not found! Set it in .env or Streamlit Secrets.")
-    st.stop()
-else:
-    st.error("API key found! ")
+
 
 
 # def generate_website(prompt):
@@ -46,6 +40,13 @@ else:
 #     print(content)  # Optional for debugging
 #     return content
 def generate_website(prompt):
+    # Check env first, fallback to Streamlit secrets
+    API_KEY = os.getenv("open_router_llm_api") or st.secrets.get("open_router_llm_api")
+    if not API_KEY:
+        st.error("API key not found! Set it in .env or Streamlit Secrets.")
+        st.stop()
+    else:
+        st.error("API key found! ")
     import requests
 
     headers = {

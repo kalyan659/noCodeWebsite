@@ -15,7 +15,6 @@ import streamlit as st
 # Load environment variables from .env file
 load_dotenv()
 
-UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY") or st.secrets.get("UNSPLASH_ACCESS_KEY")
 def call_ollama(prompt):
     prompt = prompt + ''' Output only the full working HTML document including embedded CSS and JavaScript 
     — no explanations, no markdown, just the code. It should be a single-page website with a hero banner, 
@@ -716,6 +715,8 @@ FALLBACK_IMAGES = [
 ]
 import random
 def get_unsplash_image(query):
+    
+    UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY") or st.secrets.get("UNSPLASH_ACCESS_KEY")
     # headers = {"Authorization": f"Client-ID {UNSPLASH_ACCESS_KEY}"}
     # params = {"query": query or "website", "orientation": "landscape"}
     # r = requests.get("https://api.unsplash.com/photos/random", headers=headers, params=params)
