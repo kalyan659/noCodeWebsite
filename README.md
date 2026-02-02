@@ -14,13 +14,37 @@ This project demonstrates a **no-code website generation and deployment workflow
 
 ---
 
-## Project Structure
-```text
-noCodeWebsite/
-├── assets/            # Static assets (images, styles, etc.)
-├── templates/         # Reusable website templates
-├── config/            # Configuration files for no-code generation
-├── scripts/           # Automation and deployment scripts
-├── index.html         # Entry point for the generated website
-└── README.md          # Project documentation
+# How It Works
+
+## Input Definition
+Website structure, content, and styling are defined through configuration files or UI-based inputs, eliminating the need for manual coding.
+
+## Website Generation
+The system converts the provided inputs into a complete, functional website using predefined and reusable templates.
+
+## Deployment
+The generated website is deployed automatically to a selected hosting platform.
+
+---
+
+# Use Cases
+- Rapid MVP and prototype development  
+- Portfolio and landing page creation  
+- Internal tools and demos  
+- Website creation for non-technical users  
+
+---
+
+# Getting Started
+
+## Prerequisites
+- Basic understanding of web concepts (optional)  
+- Node.js / Python (if scripts are used)  
+- Internet access for deployment  
+
+## Run Locally
+```bash
+git clone https://github.com/kalyan659/noCodeWebsite.git
+cd noCodeWebsite
+
 
