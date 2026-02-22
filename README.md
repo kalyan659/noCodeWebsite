@@ -17,7 +17,7 @@ https://github.com/user-attachments/assets/86672cea-b7df-49eb-87dc-180273eb7d87
 
 ---
 
-# How It Works
+# How It Work
 
 ## Input Definition
 Website structure, content, and styling are defined through configuration files or UI-based inputs, eliminating the need for manual coding.
