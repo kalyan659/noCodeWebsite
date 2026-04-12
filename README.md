@@ -13,7 +13,7 @@ https://github.com/user-attachments/assets/86672cea-b7df-49eb-87dc-180273eb7d87
 - **Rapid Prototyping** – Quickly create MVPs, demos, and landing pages  
 - **Automated Deployment** – Deploy generated websites with minimal effort  
 - **Accessibility-Focused** – Encourages user-friendly and accessible designs  
-- **Extensible Design** – Can be extended with AI-based or template-driven components  
+- **Extensible Design** – Can be extended with AI-based or template-driven components. 
 
 ---
 
